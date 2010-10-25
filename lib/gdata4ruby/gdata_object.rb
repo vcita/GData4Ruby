@@ -139,9 +139,17 @@ module GData4Ruby
             ele.elements.each('name'){}.map {|e| @author_name = e.text}
             ele.elements.each('email'){}.map {|e| @author_email = e.text}
           when 'published'
-            @published = Time.parse(ele.text)
+            begin
+              @published = Time.parse(ele.text)
+            rescue
+              @published = nil
+	    end
           when 'updated'
-            @updated = Time.parse(ele.text)
+            begin
+              @updated = Time.parse(ele.text)
+            rescue
+              @updated = nil
+            end 
         end
       end
       return xml.root
