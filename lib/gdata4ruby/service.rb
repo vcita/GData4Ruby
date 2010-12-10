@@ -39,7 +39,10 @@ module GData4Ruby
     # The authenticate method passes the username and password to google servers.  
     # If authentication succeeds, returns true, otherwise raises the AuthenticationFailed error.
     # Thanks to David King and Scott Taylor for Ruby 1.9 fix.
-    def authenticate(username, password, service)
+    def authenticate(options = {})
+      username = options[:username]
+      password = options[:password]
+      service = options[:service]
       @auth_token = nil
       ret = nil
       ret = send_request(Request.new(:post, AUTH_URL, "Email=#{username}&Passwd=#{password}&source=GCal4Ruby&service=#{service}&accountType=HOSTED_OR_GOOGLE"))
@@ -53,6 +56,16 @@ module GData4Ruby
       else
         raise AuthenticationFailed
       end
+    end
+    
+    def reauthenticate(options = {})
+      options[:username] ||= @account
+      options[:password] ||= @password
+      authenticate(options)
+    end
+    
+    def authenticated?
+      return not @auth_token 
     end
   end
 end

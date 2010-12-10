@@ -86,6 +86,21 @@ module GData4Ruby
       @gdata_version = attributes[:gdata_version] ? attributes[:gdata_version] : '2.1'
     end
     
+    # Provides a mechanism for your service to receive credentials and authenticate
+    def authenticate(options = {})
+      
+    end 
+    
+    # Allows a user to revive the authentication (connection)
+    def reauthenticate(options = {})
+      
+    end
+    
+    # Is the service successfully authenticated and connected to google?
+    def authenticated?
+      return false
+    end
+    
     #Sends a request to the Google Data System.  Accepts a valid Request object, and returns a 
     #HTTPResult class.
     def send_request(request)
