@@ -36,11 +36,16 @@ module GData4Ruby
     # The method is a generic hash to allow subclasses to easily receive args for their own type of authentication
     # In this case, we're using an OAuth AccessToken - http://oauth.rubyforge.org/rdoc/classes/OAuth/AccessToken.html
     def authenticate(options = {})
-      @access_token = authentication_hash[:access_token]
+      @access_token = options[:access_token]
     end
     
     def reauthenticate(options = {})
-      @access_token ||= authentication_hash[:access_token]
+      @access_token ||= options[:access_token]
+    end
+    
+    
+    def authenticated?
+      return (@access_token != nil)
     end
     
     private
@@ -56,7 +61,6 @@ module GData4Ruby
             @access_token.put(request.url.to_s, request.content, request.headers)
           when :delete
             @access_token.delete(request.url.to_s, request.headers)
-        end
       end
       
       while ret.is_a?(Net::HTTPRedirection)
@@ -83,9 +87,6 @@ module GData4Ruby
     def add_auth_header(request)
       return nil
     end
-    
-    def authenticated?
-      return (@access_token != nil)
-    end
+  
   end
 end

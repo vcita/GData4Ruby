@@ -65,7 +65,7 @@ module GData4Ruby
     end
     
     def authenticated?
-      return not @auth_token 
+      return !@auth_token 
     end
   end
 end

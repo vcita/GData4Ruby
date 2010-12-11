@@ -101,6 +101,15 @@ module GData4Ruby
       return false
     end
     
+    def debug
+      return (@debug != nil)
+    end
+    
+    def debug=(value)
+      @debug = value
+    end
+    
+    
     #Sends a request to the Google Data System.  Accepts a valid Request object, and returns a 
     #HTTPResult class.
     def send_request(request)
