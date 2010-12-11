@@ -29,7 +29,9 @@ module GData4Ruby
     def initialize(attributes = {})
       super(attributes)
       attributes.each do |key, value|
-        self.send("#{key}=", value)
+        if self.respond_to?(key)
+          self.send("#{key}=", value)
+        end
       end    
     end
     
@@ -51,7 +53,8 @@ module GData4Ruby
     private
     
     def do_request(request)
-      puts "Sending request\nHeader: #{request.headers.inspect.to_s}\nContent: #{request.content.to_s}\n" if @debug
+      log("Sending request\nHeader: #{request.headers.inspect.to_s}\nContent: #{request.content.to_s}\n")
+      set_protocol!(request.url)
       ret = case request.type
           when :get
             @access_token.get(request.url.to_s, request.headers)

@@ -65,7 +65,7 @@ module GData4Ruby
   #the Service subclass.
 
   class Base
-    AUTH_URL = "https://www.google.com/accounts/ClientLogin"
+    @@auth_url = "https://www.google.com/accounts/ClientLogin"
     @proxy_info = nil
     @auth_token = nil
     @debug = false
@@ -80,10 +80,20 @@ module GData4Ruby
     #The GData version used by the service
     attr_accessor :gdata_version
 
+    # Will have the service use https instead of http
+    attr_accessor :use_ssl
+
     #Optionally, pass a hash of attributes to populate the class.  If you want to use a GData version
     #other than the default (2.1), pass a key/value pair, i.e. {:gdata_version => '1.0'}      
     def initialize(attributes = {})
-      @gdata_version = attributes[:gdata_version] ? attributes[:gdata_version] : '2.1'
+      attributes.each do |key, value|
+        if self.respond_to?(key)
+          self.send("#{key}=", value)
+        end
+      end
+      @gdata_version ||= '2.1'
+      @use_ssl ||= false
+      @debug ||= false
     end
     
     # Provides a mechanism for your service to receive credentials and authenticate
@@ -105,26 +115,38 @@ module GData4Ruby
       return (@debug != nil)
     end
     
+    def log(string)
+      puts string if debug
+    end
+    
     def debug=(value)
       @debug = value
     end
     
-    
+    def create_url(path)
+      return http_protocol + path
+    end
+       
     #Sends a request to the Google Data System.  Accepts a valid Request object, and returns a 
     #HTTPResult class.
     def send_request(request)
       raise ArgumentError 'Request must be a GData4Ruby::Request object' if not request.is_a?Request
-      puts "sending #{request.type} to url = #{request.url.to_s}" if @debug
+      log("sending #{request.type} to url = #{request.url.to_s}")
       do_request(request)
     end
 
     private
 
+    def set_protocol!(uri)
+      uri.scheme = protocol
+    end
+
     def do_request(request)
       ret = nil
       add_auth_header(request)
+      set_protocol!(request.url)
       http = get_http_object(request.url)
-      puts "Sending request\nHeader: #{request.headers.inspect.to_s}\nContent: #{request.content.to_s}\n" if @debug
+      log("Sending request\nHeader: #{request.headers.inspect.to_s}\nContent: #{request.content.to_s}\n")
       http.start do |ht|
         ret = case request.type
           when :get
@@ -139,17 +161,17 @@ module GData4Ruby
       end
       
       while ret.is_a?(Net::HTTPRedirection)
-        puts "Redirect received, resending request" if @debug
+        log("Redirect received, resending request")
         request.parameters = nil
         request.url = ret['location']
-        puts "sending #{request.type} to url = #{request.url.to_s}" if @debug
+        log("sending #{request.type} to url = #{request.url.to_s}")
         ret = do_request(request)
       end
       if not ret.is_a?(Net::HTTPSuccess)
-        puts "invalid response received: "+ret.code if @debug
+        log("invalid response received: "+ret.code)
         raise HTTPRequestFailed, ret.body
       end
-      puts "20x response received\nResponse: \n"+ret.read_body if @debug
+      log("20x response received\nResponse: \n"+ret.read_body)
       return ret
     end
 
@@ -161,7 +183,7 @@ module GData4Ruby
 	    end
       if location.scheme == 'https'
         #fixed http/http misnaming via JohnMetta
-        puts "SSL True" if @debug
+        log("SSL True")
         http.use_ssl = true
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
@@ -178,5 +200,18 @@ module GData4Ruby
         end
       end
     end
+    
+    protected
+      def protocol
+        ssl_suffix = ""
+        ssl_suffix = "s" if use_ssl
+        return "http#{ssl_suffix}"
+      end
+      def http_protocol
+        ssl_suffix = ""
+        ssl_suffix = "s" if use_ssl
+        return "http#{ssl_suffix}://"
+      end
+    
   end
 end

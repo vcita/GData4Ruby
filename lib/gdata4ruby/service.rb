@@ -32,7 +32,9 @@ module GData4Ruby
     def initialize(attributes = {})
       super(attributes)
       attributes.each do |key, value|
-        self.send("#{key}=", value)
+        if self.respond_to?(key)
+          self.send("#{key}=", value)
+        end
       end    
     end
     
@@ -45,7 +47,9 @@ module GData4Ruby
       service = options[:service]
       @auth_token = nil
       ret = nil
-      ret = send_request(Request.new(:post, AUTH_URL, "Email=#{username}&Passwd=#{password}&source=GCal4Ruby&service=#{service}&accountType=HOSTED_OR_GOOGLE"))
+      auth_args = "Email=#{username}&Passwd=#{password}&source=GCal4Ruby&service=#{service}&accountType=HOSTED_OR_GOOGLE"
+      log(auth_args)
+      ret = send_request(Request.new(:post, @@auth_url, auth_args))
       if ret.class == Net::HTTPOK
         body = ret.read_body
         lines = body.send(body.respond_to?(:lines) ? :lines : :to_s).to_a
@@ -54,6 +58,7 @@ module GData4Ruby
         @password = password
         return true
       else
+        @auth_token = nil
         raise AuthenticationFailed
       end
     end
@@ -65,7 +70,8 @@ module GData4Ruby
     end
     
     def authenticated?
-      return !@auth_token 
+      log("AuthToken #{@auth_token}")
+      return (@auth_token != nil)
     end
   end
 end
