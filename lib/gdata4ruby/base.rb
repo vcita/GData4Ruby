@@ -111,16 +111,8 @@ module GData4Ruby
       return false
     end
     
-    def debug
-      return (@debug != nil)
-    end
-    
     def log(string)
-      puts string if debug
-    end
-    
-    def debug=(value)
-      @debug = value
+      puts string if self.debug
     end
     
     def create_url(path)

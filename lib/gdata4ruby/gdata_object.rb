@@ -175,7 +175,7 @@ module GData4Ruby
     end
     
     def log(string)
-      puts string if @debug
+      puts string if self.debug
     end
     
     #Creates the object.  This must be overridden in a subclass, as the feed url for creating new

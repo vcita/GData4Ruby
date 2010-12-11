@@ -67,17 +67,17 @@ module GData4Ruby
       end
       
       while ret.is_a?(Net::HTTPRedirection)
-        puts "Redirect received, resending request" if @debug
+        log("Redirect received, resending request")
         request.parameters = nil
         request.url = ret['location']
-        puts "sending #{request.type} to url = #{request.url.to_s}" if @debug
+        log("sending #{request.type} to url = #{request.url.to_s}")
         ret = do_request(request)
       end
       if not ret.is_a?(Net::HTTPSuccess)
-        puts "invalid response received: "+ret.code if @debug
+        log("invalid response received: "+ret.code)
         raise HTTPRequestFailed, ret.body
       end
-      puts "20x response received\nResponse: \n"+ret.read_body if @debug
+      log("20x response received\nResponse: \n"+ret.read_body)
       return ret
     end
 
