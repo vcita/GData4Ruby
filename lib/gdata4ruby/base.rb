@@ -87,7 +87,7 @@ module GData4Ruby
     #other than the default (2.1), pass a key/value pair, i.e. {:gdata_version => '1.0'}      
     def initialize(attributes = {})
       attributes.each do |key, value|
-        if self.respond_to?(key)
+        if self.respond_to?("#{key}=")
           self.send("#{key}=", value)
         end
       end

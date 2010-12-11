@@ -73,6 +73,9 @@ module GData4Ruby
     #The kind (type) of the object
     attr_reader :kind
     
+    #Used for debugging
+    attr_accessor :debug
+    
     #Indicates whether the object exists on the Google servers, i.e. has been created/saved.
     def exists?
       return @exists
@@ -89,7 +92,9 @@ module GData4Ruby
       @categories = @feed_links = []
       @include_etag = true
       attributes.each do |key, value|
-        self.send("#{key}=", value)
+        if self.respond_to?("#{key}=")
+          self.send("#{key}=", value)
+        end
       end
     end
     
@@ -104,14 +109,15 @@ module GData4Ruby
         @etag = xml.root.attributes['etag'] if xml.root.attributes['etag']
         case ele.name
           when "id"
-            puts 'setting id' if service.debug
             @feed_uri = ele.text
+            log("ID: #{@feed_uri}")
           when 'content'
             @content_uri = ele.attributes['src'] if ele.attributes['src']
           when 'resourceId'
             @id = ele.text
           when 'title'
             @title = ele.text
+            log("Title: #{@title}")
           when 'category'
             @categories << {:label => ele.attributes['label'], 
                             :scheme => ele.attributes['scheme'],
@@ -166,6 +172,10 @@ module GData4Ruby
         raise SaveFailed, 'Could not save object'
       end
       return true
+    end
+    
+    def log(string)
+      puts string if @debug
     end
     
     #Creates the object.  This must be overridden in a subclass, as the feed url for creating new

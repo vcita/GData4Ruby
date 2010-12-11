@@ -32,7 +32,7 @@ module GData4Ruby
     def initialize(attributes = {})
       super(attributes)
       attributes.each do |key, value|
-        if self.respond_to?(key)
+        if self.respond_to?("#{key}=")
           self.send("#{key}=", value)
         end
       end    
@@ -70,7 +70,7 @@ module GData4Ruby
     end
     
     def authenticated?
-      log("AuthToken #{@auth_token}")
+      log("Authenticated: #{@auth_token}")
       return (@auth_token != nil)
     end
   end
