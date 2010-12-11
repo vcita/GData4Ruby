@@ -129,14 +129,29 @@ module GData4Ruby
 
     private
 
-    def set_protocol!(uri)
-      uri.scheme = protocol
+    def set_protocol!(request)
+      uri = request.url
+      if uri.scheme != protocol
+        request.url = URI.parse(uri.to_s.sub(uri.scheme, protocol))
+        # values = uri.select(*uri.component)
+        #         keys = uri.component
+        #         components_hash = {}
+        #         # Build a hash where the keys are from keys[] and values are from values[]
+        #         keys.zip(values) {|a,b| components_hash[a] = b }
+        #         components_hash[:scheme] = protocol
+        #         request.url = case protocol
+        #         when 'https'
+        #           URI::HTTPS.build(components_hash)
+        #         when 'http'
+        #           URI::HTTP.build(components_hash)
+        #         end
+        end
     end
 
     def do_request(request)
       ret = nil
       add_auth_header(request)
-      set_protocol!(request.url)
+      set_protocol!(request)
       http = get_http_object(request.url)
       log("Sending request\nHeader: #{request.headers.inspect.to_s}\nContent: #{request.content.to_s}\n")
       http.start do |ht|

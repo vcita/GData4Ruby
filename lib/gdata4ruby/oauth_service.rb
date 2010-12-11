@@ -54,7 +54,7 @@ module GData4Ruby
     
     def do_request(request)
       log("Sending request\nHeader: #{request.headers.inspect.to_s}\nContent: #{request.content.to_s}\n")
-      set_protocol!(request.url)
+      set_protocol!(request)
       ret = case request.type
           when :get
             @access_token.get(request.url.to_s, request.headers)
