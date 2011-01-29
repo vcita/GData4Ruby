@@ -113,6 +113,7 @@ module GData4Ruby
             log("ID: #{@feed_uri}")
           when 'content'
             @content_uri = ele.attributes['src'] if ele.attributes['src']
+            log("Content URI: #{@content_uri}")
           when 'resourceId'
             @id = ele.text
           when 'title'

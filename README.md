@@ -44,13 +44,16 @@ Below are some common usage examples.  For more examples, check the documentatio
 	
 ### OAuthService
 
-You will need an OAuth Token for authenticating for any given user. If you are using Rails, [OAuth Plugin](https://github.com/pelle/oauth-plugin) makes this fairly easy for users to grant access to your application and generate OAuth Tokens.
+You will need an OAuth Token for authenticating for any given user. If you are using Rails, [OAuth Plugin](https://github.com/pelle/oauth-plugin) makes this fairly easy for users to grant access to your application and generate [OAuth Tokens](http://code.google.com/p/oauth-plugin/wiki/AccessToken).
 
 Once you have a token, authenticating is simple:
 
 	service = OAuthService.new
+	my_oauth_token = OAuth::AccessToken.new() # you will need to generate your own OAuth::Token
 	service.authenticate({:access_token=>my_oauth_token})
+
 	
+
 ## Base Options
 
 GData4Ruby supports several options which are passed to any service (Base, Service, OAuthService) upon initialization using a hash
