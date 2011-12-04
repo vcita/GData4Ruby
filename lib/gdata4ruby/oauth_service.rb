@@ -52,9 +52,7 @@ module GData4Ruby
     
     private
     
-    def do_request(request)
-      redirect_count = 0
-
+    def do_request(request, redirect_count = 0)
       log("Sending request\nHeader: #{request.headers.inspect.to_s}\nContent: #{request.content.to_s}\n")
       set_protocol!(request)
       ret = case request.type
@@ -69,14 +67,16 @@ module GData4Ruby
       end
       
       while ret.is_a?(Net::HTTPRedirection)
-        redirect_count = redirect_count + 1
-        raise HTTPRequestFailed, "Redirect loop, please validate user" if redirect_count > 10
+        if request.same_url?(ret['location']) || redirect_count > 100
+          raise HTTPRequestFailed, "Redirect loop, please validate user"
+        end
 
         log("Redirect received, resending request")
         request.parameters = nil
         request.url = ret['location']
+
         log("sending #{request.type} to url = #{request.url.to_s}")
-        ret = do_request(request)
+        ret = do_request(request, redirect_count + 1)
       end
       if not ret.is_a?(Net::HTTPSuccess)
         log("invalid response received: "+ret.code)

@@ -44,6 +44,7 @@ module GData4Ruby
     
     #The HTTP url to send the request to
     def url=(new_url)
+      @given_url_string = new_url if new_url.is_a?(String)
       @url = new_url
     end
     
@@ -51,6 +52,10 @@ module GData4Ruby
     def parameters=(query_parameters) 
       raise ArgumentError, 'Query parameters must be a Hash' if query_parameters != nil and not query_parameters.is_a? Hash
       @parameters = query_parameters.is_a?(Hash) ? "?#{query_parameters.to_a.collect{|a| a.join("=")}.join("&")}" : nil
+    end
+
+    def same_url?(other_url)
+      return @given_url_string == other_url
     end
     
     #The HTTP url to send the request to
