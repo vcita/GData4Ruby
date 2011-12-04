@@ -150,6 +150,8 @@ module GData4Ruby
 
     def do_request(request)
       ret = nil
+      redirect_count = 0
+
       add_auth_header(request)
       set_protocol!(request)
       http = get_http_object(request.url)
@@ -166,8 +168,11 @@ module GData4Ruby
             ht.delete(request.url.to_s, request.headers)
         end
       end
-      
+
       while ret.is_a?(Net::HTTPRedirection)
+        redirect_count = redirect_count + 1
+        raise HTTPRequestFailed, "Redirect loop, please validate user" if redirect_count > 10
+
         log("Redirect received, resending request")
         request.parameters = nil
         request.url = ret['location']
