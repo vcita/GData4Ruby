@@ -9,14 +9,14 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mike Reich", "Anthony Underwood", "David Pitman"]
-  s.date = %q{2011-01-11}
+  s.date = %q{2011-12-05}
   s.email = ["mike@seabourneconsulting.com", "email2ants@gmail.com", "ui-design@vestaldesign.com"]
   s.extra_rdoc_files = [
-    "README"
+    "README.md"
   ]
   s.files = [
     "CHANGELOG",
-    "README",
+    "README.md",
     "lib/gdata4ruby.rb",
     "lib/gdata4ruby/acl/access_rule.rb",
     "lib/gdata4ruby/base.rb",
@@ -26,13 +26,10 @@ Gem::Specification.new do |s|
     "lib/gdata4ruby/service.rb",
     "lib/gdata4ruby/utils/utils.rb"
   ]
-  s.homepage = %q{https://github.com/edave/GData4Ruby}
+  s.homepage = %q{https://github.com/vcita/GData4Ruby}
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.4.1}
+  s.rubygems_version = %q{1.6.2}
   s.summary = %q{A full featured wrapper for interacting with the base Google Data API}
-  s.test_files = [
-    "test/unit.rb"
-  ]
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
