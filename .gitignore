@@ -1,2 +1,5 @@
 *.gem
 pkg/
+.idea/
+*.iml
+.rakeTasks
