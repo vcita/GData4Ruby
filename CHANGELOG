@@ -1,4 +1,7 @@
 =CHANGELOG
+==version 0.2.2
+* Forked by vCita
+* Resolved endless loop bug in redirect
 ==version 0.2.0
 * Implemented OAuth support (using the OAuth gem)
 * This requires minor changes to how the Base & Service classes are called
