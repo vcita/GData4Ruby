@@ -1,4 +1,4 @@
-# edave-GData4Ruby
+# vcita-GData4Ruby
 
 ## Introduction
 
